@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block static_block %}
+    
+    <style>
+        .container{
+            padding-left: 40px;
+        }
+        .card{
+            margin: 8px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container">
+    <div class="d-flex flex-wrap">
+    {% for product in products %}
+    
+        <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="{{product.image.url}}" alt="Card image cap" width="400px" height="300px">
+            <div class="card-body">
+             <div class="d-flex flex-wrap justify-content-between">  
+                <div>
+                     <a href="{% url 'productdetails' product.id %}"><h5 class="card-title">{{product.name}}</h5></a>
+                </div>
+                <div class="justify-content-end">
+                     <h5> Rs.{{product.price}}</h5>
+                </div>
+             </div> 
+             <br>
+            <a href="#" onclick="event.preventDefault()" class="btn btn-primary add_to_cart"  data-id = "{{product.id}}">Add to cart</a>
+
+            </div>
+        </div>
+     
+    {% endfor %}
+    
+   
+    </div>
+    {% if not nopages %}
+    <div style="padding: 20px; padding-left:540px;">
+    <div class="pagination">
+        <span class="step-links">
+            {% if products.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ products.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ products.number }} of {{ products.paginator.num_pages }}.
+            </span>
+    
+            {% if products.has_next %}
+                <a href="?page={{ prodcuts.next_page_number }}">next</a>
+                <a href="?page={{ products.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+{% endif %}
+    
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+$(document).ready(function(){
+    
+    $('a.add_to_cart').click(function(e){
+        console.log('hello')
+        e.preventDefault()
+        id = $(this).data("id")
+        $.ajax({
+            url: "{% url 'addtocart'  %}",
+            type: "GET",
+            data: {"product_id":id},
+            success: function(response){
+                console.log("succeccfully added")
+            }
+         }
+        )
+    })
+  
+ });
+</script>
+
+{% endblock %} 

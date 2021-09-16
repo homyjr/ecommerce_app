@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block static_block %}
+    
+
+<style>
+    .login--wrapper {
+        display: flex;
+        align-items: center;
+        height: 80vh;
+        justify-content: center;
+    }
+
+    .form {
+        width: 500px;
+    }
+</style>    
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="login--wrapper">
+
+        {% if page == 'login' %}
+        <form method='post' class="form">
+            {% csrf_token %}
+            <h1>Login</h1>
+            <h4>Login to view photos and share with your friends</h4>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Username</label>
+                <input type="text" class="form-control" name="username" id="exampleInputEmail1"
+                    aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" id="exampleInputPassword1">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <p>Don't have an account <a href="{% url 'register' %}">Register</a></p>
+        </form>
+        {% else %}
+        <form method='post'>
+            <h1>Register</h1>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">{{field.label}}</label>
+                {{field}}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <p>Already have an account <a href="{% url 'login' %}">Login</a></p>
+
+        </form>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% include 'base.html' %}
+
+
+{% block content %}
+
+{% include 'navbar.html' %}
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-6 left">
+            <div class="pic">
+                <img src="{{product.image.url}}" alt="" width = "400px" height = "400px">
+            </div>
+        </div>
+        
+        <div class="col-6 right">
+            <div class="productdetails m-2  ">
+                product : {{product}}
+            </div>
+            <hr>
+            <div class="price m-2 ">
+                price : {{product.price}}
+            </div>
+            <div class="description m-2 ">
+               <p>{{product.features}}</p>
+            </div>
+
+            <hr >
+            <div class="row">
+                <div class="col-6">
+                    <a href="#" onclick="event.preventDefault()" class="btn btn-primary add_to_cart"  data-id = "{{product.id}}">Add to cart</a>
+
+                </div>
+                <div class="col-6">
+                    <a href="{% url 'buynow' product.id %}" type="button" class="btn btn-warning">Buynow</a>
+                </div>
+            </div>
+        </div>
+    </div>  
+    <br>
+    <div class="review mt-3">
+        <div class="row">
+            <div class="col-10"><h4>reviews</h4></div>
+            <div class="col-2">
+                {% if request.user.is_authenticated %}                    <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    write a review
+                </button>
+                {% endif %}
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Your Review</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        <form action="{% url 'writereview' %}", method = "POST">
+                            {% csrf_token %}
+                            <input type='hidden' value='{{product.id}}' name='id'>
+                            {{form}}
+                        
+                        </div>
+                        <div class="modal-footer">
+                             <button type="submit" class="btn btn-primary">Post</button>
+                        </div>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+          <hr>
+          <div class="comment">
+           {% for review in reviews %}
+                <div class="card text-dark bg-light mb-3">
+                    <div class="card-header">{{review.customer}}</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{review.subject}}</h5>
+                        <p class="card-text">{{review.content}}</p>
+                    </div>
+                </div>
+            {% endfor %}    
+          </div>
+          <button type="button" class="btn btn-warning" id='loadmore' data-id = '{{product.id}}' >Load More</button>
+    </div>
+    <br>
+ </div>
+	
+{% endblock %}
+{% block scripts %}
+
+<script>
+$(document).ready(function(){
+    
+
+
+    $('a.add_to_cart').click(function(e){
+        console.log('hello')
+        e.preventDefault()
+        id = $(this).data("id")
+        $.ajax({
+            url: "{% url 'addtocart'  %}",
+            type: "GET",
+            data: {"product_id":id},
+            success: function(response){
+                console.log("succeccfully added")
+            }
+         }
+        )
+    })
+     
+    var reviewcount = 3
+
+    $('#loadmore').click(function(e){
+        e.preventDefault()
+        id = $(this).data('id')
+        reviewcount = reviewcount+3
+        $.ajax({
+            url: "{% url 'IncreaseReviews' %}",
+            type : "GET",
+            data:{"reviewcount":reviewcount,
+                  'id': id},
+            success: function(response){
+                for(var i = 0; i < response.reviews.length; i++){
+
+                   $('.comment').append( `<div class="card text-dark bg-light mb-3">
+                        <div class="card-header">`+ response.reviews[i].customer +`</div>
+                        <div class="card-body">
+                            <h5 class="card-title">`+ response.reviews[i].subject +`</h5>
+                            <p class="card-text">`+ response.reviews[i].content +`</p>
+                        </div>
+                    </div>`)
+                }
+                
+
+            }
+        })
+    })
+
+
+  
+ });
+</script>
+
+{% endblock %} 
