@@ -32,7 +32,7 @@ def products_display(request, **kwargs):
         return render(request, 'store/main.html', context)
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
 
 
 
@@ -61,7 +61,7 @@ def add_to_cart(request):
    
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
 
 
 def cart(request):
@@ -91,7 +91,7 @@ def cart(request):
 
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
 
 
 
@@ -143,7 +143,7 @@ def updatecart(request):
 
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
 
 
 def loginUser(request):
@@ -165,7 +165,7 @@ def loginUser(request):
         return render(request, 'store/login_register.html', {'page': page})     
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
 
 
 
@@ -178,7 +178,7 @@ def logoutUser(request):
 
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
 
 
 def registerUser(request):
@@ -203,7 +203,7 @@ def registerUser(request):
 
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
 
 def AddSessionToOrderItems(request):
     """ add items that are stored in sessions are now stored in database """
@@ -230,7 +230,7 @@ def AddSessionToOrderItems(request):
 
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')          
+        raise Http404('Sorry some error occured')          
 
 
 @login_required(redirect_field_name='login')
@@ -260,7 +260,7 @@ def shippingaddress(request):
         return render(request, 'store/shipping.html', context)
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
 
 
 @login_required(redirect_field_name='login')
@@ -293,7 +293,7 @@ def payment(request):
             return HttpResponse('payment already done')
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')        
+        raise Http404('Sorry some error occured')        
 
 def processorder(request):
     """ after successfull payment initiate order and store it in myorders"""
@@ -308,7 +308,7 @@ def processorder(request):
         myorder[0].save()
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')    
+        raise Http404('Sorry some error occured')    
 
      
 
@@ -316,8 +316,9 @@ def processorder(request):
 def myorder(request):
     """ contains ordered items"""
     try:
-        customer = Customer.objects.get(user = request.user)
+        customer, created = Customer.objects.get_or_create(user = request.user)
         myorders = Myorder.objects.filter(customer = customer)
+       
 
         context = {
             'myorders':myorders
@@ -326,7 +327,7 @@ def myorder(request):
         return render(request, 'store/myorders.html', context)
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')    
+        raise Http404('Sorry some error occured')    
     
    
 def ordersuccess(request, id):
@@ -336,7 +337,7 @@ def ordersuccess(request, id):
         return render(request, 'store/ordersuccess.html', context)
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
 
 
 @login_required(redirect_field_name='login')
@@ -348,7 +349,7 @@ def cancelorder(request, id):
         return redirect('myorder')
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')    
+        raise Http404('Sorry some error occured')    
 
 
 def search(request):
@@ -363,7 +364,7 @@ def search(request):
         return render(request, 'store/main.html', context)
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
 
 
 def ShowProductDetailsAndReviews(request , **kwargs):
@@ -378,7 +379,7 @@ def ShowProductDetailsAndReviews(request , **kwargs):
         return render(request, 'store/product.html', context)       
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')      
+        raise Http404('Sorry some error occured')      
 
 @login_required(redirect_field_name='login')
 def buynow(request, **kwargs):
@@ -397,7 +398,7 @@ def buynow(request, **kwargs):
             return redirect('cart')   
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')         
+        raise Http404('Sorry some error occured')         
 
             
 @login_required(redirect_field_name='login')
@@ -418,7 +419,7 @@ def writereview(request):
             return redirect('productdetails', id=request.POST.get('id')) 
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')          
+        raise Http404('Sorry some error occured')          
 
 def IncreaseReviews(request):
     """ when load more button is clicked load more reviews"""
@@ -440,7 +441,7 @@ def IncreaseReviews(request):
             return JsonResponse({'reviews':data}, status=200)   
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')         
+        raise Http404('Sorry some error occured')         
 
           
 @login_required(redirect_field_name='login')
@@ -465,4 +466,4 @@ def myaccount(request):
 
     except Exception as e:
         logger.error(e)
-        return Http404('Sorry some error occured')
+        raise Http404('Sorry some error occured')
