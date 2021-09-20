@@ -7,6 +7,10 @@ install the project dependencies with
 ```console
 pip install -r requirements.txt
 ```
+enter the project folder
+```console
+cd ecommerce
+```
 Now you can run the project with this command
 ```console
 python manage.py runserver
