@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container">
+{% for myorder in myorders %}
+<div class="card mt-3">
+      <div class="card-body">
+          <div class="row">
+            <div class="col-5">
+                  <h6>transactionid : {{myorder.order.transaction_id}} </h6>
+            </div>
+            <div class="col-4">
+               <h6>date: {{myorder.date_ordered}} <span> Status : {{myorder.status}} </span></h6>
+
+             </div>
+            <div class="col-3">
+                <button type="button" class="btn btn-warning btnclose"  data-target="{{myorder.id}}">view</button>
+                {% if myorder.status == 'ACTIVE' %}
+                <a href="{% url 'cancelorder' myorder.id %}" type="button" class="btn btn-danger">Cancel Order</a>
+                {% endif %}
+            </div>
+          </div>
+          
+         <div class="collapse" id="{{myorder.id}}">
+            <div class="card card-body mt-3">
+                <div class="row"> 
+                    
+                    <div class="col-8">
+                        <h6>items</h6>
+                        {% for item in myorder.order.orderitem_set.all %}
+                        <div>{{item.product}} : {{item.get_total}}</div>
+                            
+                        {% endfor %}
+                    </div>  
+                    <div class="col-4">
+
+                        <h6>total :</h6>{{myorder.order.get_total_price}}
+                    </div>
+              </div>  
+            </div>
+          </div>
+        
+      </div>
+    </div>  
+    <br>
+  
+
+{%  endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $(document).ready(function(){
+   $(".btnclose").click(function(){
+     id = $(this).data('target')
+     $("#"+id).toggle();
+   });
+  })
+</script>
+{% endblock %}

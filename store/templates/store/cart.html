@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block static_block %}
+    
+    <link rel="stylesheet" href="{% static 'store/cart.css' %}">
+    
+{% endblock %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container ">
+    <div class="row mt-2">
+        <div class="col-8">
+            {% for item in items %}
+            <div class="row box1 mb-2" id = "{{item.product.id}}">
+              <div class="innerbox1 col-3">
+                  <img src="{{item.product.image.url}}" alt="" width="160px" height="160px">
+              </div>
+              <div class="innerbox2 col-9">
+                   <div class="product_info mt-2 row">
+                       <div class="col-11"><h3>{{item.product}}</h3>
+                          <div>
+                              <h6>this is a beautiful product</h6>
+                          </div>
+                       </div>
+                       <div class="col-1 mt-1">
+                           <span class = "closebtn" data-product-id = "{{item.product.id}}"  data-action="remove"  data-url = "{% url 'updatecart' %}" ><i class="far fa-window-close fa-lg"></i></span>
+                    </div>
+                   </div>
+                   <hr style="width:95%;text-align:left;margin-left:0">
+                   <div class="row justify-content-between">
+                    <div class="col-8" data-product-id = "{{item.product.id}}">
+                         <h5 style="display: inline;">quantity:</h5>
+                        <span class = 'subtract' data-action="subtract" data-url = "{% url 'updatecart' %}"><i class="far fa-minus-square fa-lg"></i></span>
+                        <span class="quantity">{{item.quantity}}</span> 
+                        <span class = 'add' data-action="add" data-url = "{% url 'updatecart' %}"><i class="far fa-plus-square fa-lg"></i></span>
+
+                    </div>
+                        <div class="col-4">
+                            <h5 style="display: inline;">price: <span class="quantity_price">{{item.get_total|floatformat:2}}</span> </h5>
+                        </div>
+
+                   </div>
+              </div>
+            </div>
+            {% endfor %}
+        </div> 
+        
+        
+        <div class="col-4">
+            <div class="box2">
+            <div class="d-flex justify-content-between">
+                  <h3>total_price</h3>
+                  <h3> <span id="total_items_price">{{totalprice|floatformat:2}}</span></h3>
+            </div>
+               <hr>
+               <div class="checkout">
+                 <a href="{% url 'shipping' %}" type="button" class="btn btn-success">Checkout</a>  
+              </div>
+               <hr>
+
+            </div>
+        </div> 
+      </div>
+      
+      
+      
+
+</div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{% static 'store/main.js' %}"></script>
+
+{% endblock %}
